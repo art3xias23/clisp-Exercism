@@ -29,7 +29,6 @@
 ;; Evaluates to the first part of CONS
 (defun first-thing (cons)
   (car cons))
-  ;; put the code to get the first part of CONS here
   
 
 ;; Evaluates to the 'rest' of the CONS
