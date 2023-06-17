@@ -7,10 +7,11 @@
 
 (in-package :lillys-lasagna)
 
-;; Define function expected-time-in-oven
+(defun expected-time-in-oven () "return the expected time of a lasagna in oven" 337)
 
-;; Define function remaining-minutes-in-oven
+(defun remaining-minutes-in-oven (minutesInOven) "returns the remaining minutes in oven" (- (expected-time-in-oven)  minutesInOven))
+ 
 
-;; Define function preparation-time-in-minutes
+(defun preparation-time-in-minutes (layers) "returns the expected preparation time based on the number of layers" (* layers 19))
 
-;; Define function elapsed-time-in-minutes
+(defun elapsed-time-in-minutes (layers time_spent_in_oven) "Calculates the full time lily has spent on the lasagna" (+ (preparation-time-in-minutes layers) time_spent_in_oven))
