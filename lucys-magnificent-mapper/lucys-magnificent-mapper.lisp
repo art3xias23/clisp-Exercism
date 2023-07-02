@@ -9,4 +9,4 @@
 
 (defun only-the-best (predicate lst)
   (remove 1 (remove-if predicate lst)))
- 
+
