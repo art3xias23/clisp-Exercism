@@ -13,5 +13,3 @@
                      (setq cnt (+ 1 cnt))))
         cnt)))
 
-(distance "ABC" "YTR")
-  
