@@ -1,6 +1,6 @@
 (defpackage :roman-numerals
   (:use :cl)
-  (:export :romanise 
+  (:export :romanize 
            :get-num-one
            :get-num-two
            :get-num-three
@@ -58,10 +58,10 @@
 (defun sets (orig apend)
   (setq orig (concatenate 'string apend orig)))
 
-(defun romanise (num)
+(defun romanize (num)
   (let ((str "")
         (counter 1))
-    (loop for digit-char across  (format nil "~a" num) do
+    (loop for digit-char across  (reverse (format nil "~a" num)) do
           (let ((digit (parse-integer (string digit-char))))
             (if (> digit 0)
                 (case counter 
@@ -71,3 +71,5 @@
                   (4 (setq str (sets str (get-num-four digit)))))))
           (setq counter (+ counter 1)))
     str))
+
+(romanize 16)
