@@ -62,7 +62,11 @@
                  (progn
                    (format t "Addin: ~A~%" char-to-add)
                    (format t "Char pos: ~A" char-position)
-                   (when (and (not (= char-position 0)) (not (= char-position (- (length orig-str) 1))))
+                   (when (and 
+                           (not (= char-position 0)) 
+                           (not (= char-position (- (length orig-str) 1)))
+                           (not (char= #\Space (char orig-str (- char-position 1))))
+                           (not (char= #\Space (char orig-str (+ char-position 1)))))
                      (setq str (concatenate 'string str (string char-to-add)))))
                  (progn
                    (if (and (< char-position (- (length orig-str) 1)) (not (char= #\Space (char orig-str (1+ char-position)))))
@@ -79,5 +83,5 @@
 (defun count-words (sentence)
   (get-list-count (remove-invalid-chars (string-downcase sentence))))
 
-(print (count-words "'First: don't laugh. Then: don't cry. You're getting it.'"))
+;(print (count-words "Joe can't tell between 'large' and large."))
 
