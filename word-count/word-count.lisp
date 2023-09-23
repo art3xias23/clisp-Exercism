@@ -35,7 +35,7 @@
   (not (null (assoc (string-downcase key) alist :test #'equal))))
 
 (defun get-list-invalid-chars ()
-  '(#\! #\, #\. #\' #\ ))
+  '(#\! #\, #\. #\' #\ #\NewLine))
 
 (defun get-list-count (str)
   (let ((words (split #\Space str))
@@ -65,5 +65,3 @@
 
 (defun count-words (sentence)
   (get-list-count (remove-invalid-chars (string-downcase sentence))))
-
-;(print (count-words "one,two,three"))
