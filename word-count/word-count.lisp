@@ -21,13 +21,13 @@
     my-list))
 
 (defun update-list (key alist)
-  (format t "Updating key~%")
   (let ((entry (assoc key alist :test #'equal)))
     (setf (cdr entry) (+ (cdr entry) 1)))
   alist)
 
 (defun add-to-list (key alist)
-  (setf alist (push (cons (string-downcase key) 1) alist))
+  (if (not (string= "" key))
+   (setf alist (push (cons (string-downcase key) 1) alist)))
   alist)
 
 (defun key-exists (key alist)
@@ -35,7 +35,7 @@
   (not (null (assoc (string-downcase key) alist :test #'equal))))
 
 (defun get-list-invalid-chars ()
-  '(#\! #\, #\. #\' #\ #\NewLine))
+  '(#\! #\, #\. #\' #\Newline #\& #\@ #\$ #\% #\^ #\& #\:))
 
 (defun get-list-count (str)
   (let ((words (split #\Space str))
@@ -46,16 +46,20 @@
                            (add-to-list word alist))))
     alist))
 
-(defun remove-char-from-string (or_ch or_str)
+(defun remove-char-from-string (invalid-char orig-str)
   (let ((str "")
-        (char-position 0))
-   (loop for ch across or_str do
-         (when (char= or_ch ch)
-               (setq char-position (position ch or_str))
-           (if (not (char= #\Space (char or_str (1+ char-position))))
-             (setq ch #\Space)
-             (setq ch "")))
-        (setq str (concatenate 'string str (string ch))))
+        (char-position 0)
+        (char-to-add ""))
+   (loop for ch across orig-str do
+         (setq char-to-add ch)
+         (when (char= invalid-char char-to-add)
+           (format t "inv: ~A, reg:~A~%" invalid-char char-to-add)
+          (setq char-position (position char-to-add orig-str))
+          (if (and (< char-position (- (length orig-str) 1)) (not (char= #\Space (char orig-str (1+ char-position))
+                                                                         (setq char-to-add #\Space))))
+             (return)))
+         (format t "Adding: ~A~%" char-to-add)
+        (setq str (concatenate 'string str (string char-to-add))))
    str))
 
 (defun remove-invalid-chars(str)
@@ -65,3 +69,4 @@
 
 (defun count-words (sentence)
   (get-list-count (remove-invalid-chars (string-downcase sentence))))
+
