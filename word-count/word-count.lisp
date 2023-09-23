@@ -4,9 +4,7 @@
 
 (in-package :word-count)
 
-
 (defvar *alist* '())
-(setf *alist* '())
 
 (defun split (delimiter str)
   (let ((my-list '())
@@ -14,59 +12,72 @@
         (end (- (length str) 1))
         (pos 0)
         (q ""))
-    (loop while (< pos end) do 
-          (setq pos (position  delimiter str :start start :end end))
+    (loop while (< pos end) do
+          (setq pos (position delimiter str :start start :end end))
           (setq pos (if (null pos)
-                       end 
-                     pos))
+                       (+ end 1)
+                       pos))
           (setq q (subseq str start pos))
-          (format t "start ~A~%" start)
-          (format t "pos ~A~%" pos)
-          (format t "end ~A~%" end)
-          (format t "pushing ~A~%" q)
           (push q my-list)
-          (format t "List: ~A~%" my-list)
           (setq start (+ pos 1)))
-    (format t "EXIT")
     my-list))
 
 (defun update-list (key)
- (let ((entry (assoc (intern key) *alist*)))
-  (setf (cdr entry) (+ (cdr entry) 1))))                
+  (format t "Updating key~%")
+  (let ((entry (assoc key *alist*)))
+    (setf (cdr entry) (+ (cdr entry) 1))))
 
 (defun add-to-list (key)
-  (setf *alist* (push (cons (intern key) 1) *alist*)))
+  (setf *alist* (push (cons (string-downcase key) 1) *alist*)))
 
 (defun key-exists (key)
   "Check if a key exists in an alist"
- (not (null (assoc (intern key) *alist*))))
+  (not (null (assoc (intern (string-downcase key)) *alist*))))
 
 (defun get-list-invalid-chars ()
-  '( #\! #\, #\. #\' #\'))
+  '(#\! #\, #\. #\' #\ ))
 
 (defun get-list-count (str)
- (let ((words (split #\Space str)))
-  (loop for word in words do
-        (format t "Word is: ~A~%" word)
-   (if (key-exists word)
-      (update-list word)
-      (add-to-list word)))
-  *alist*))
+  (let ((words (split #\Space str)))
+    (loop for word in words do
+      (let ((clean-word (remove-invalid-chars word)))
+        (if (string/= clean-word "")
+            (if (key-exists clean-word)
+                (update-list clean-word)
+                (add-to-list clean-word)))))
+    *alist*))
 
-(defun remove-char-from-string (or_ch or_str)
+(defun remove-char-from-string (or-ch or-str)
   (let ((str ""))
-   (loop for ch across or_str do
-         (unless (char= or_ch ch)
-           (setq str (concatenate 'string str (string ch)))))
-   str))
+    (loop for ch across or-str do
+          (unless (char= or-ch ch)
+            (setq str (concatenate 'string str (string ch)))))
+    str))
 
 (defun remove-invalid-chars(str)
-          (loop for ch in (get-list-invalid-chars) do
-                (print ch)
-                (setq str (remove-char-from-string ch str)))
-          str)
-    
-(defun count-words (sentence)
-          (get-list-count (remove-invalid-chars (string-downcase sentence))))
+  (loop for ch in (get-list-invalid-chars) do
+        (setq str (remove-char-from-string ch str)))
+  str)
 
-(print (count-words "I have balls i"))
+(defun count-words (sentence)
+  (get-list-count (string-downcase sentence)))
+
+(defvar a '())
+(defvar b '())
+
+(defun maniac()
+  (setq *alist* '())
+  (setq a (split #\Space "hello my name koce name"))
+  (format t "List: ~A~%" a)
+  (loop for item in a do
+        (format t "word: ~A~%" item)
+        (if (assoc item *alist*)
+            (progn
+              (format t "WORKED~%")
+              (update-list item))
+            (progn
+              (format t "FAILED~%")
+              (add-to-list item)))
+        (format t "*alist*: ~A~%" *alist*)))
+
+(maniac)
