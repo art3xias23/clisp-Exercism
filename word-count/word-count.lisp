@@ -26,8 +26,8 @@
   alist)
 
 (defun add-to-list (key alist)
-  (if (not (string= "" key))
-   (setf alist (push (cons (string-downcase key) 1) alist)))
+  (if (and (not (string= "" key)) (not (string= " " key)))
+   (setf alist (push (cons (string-trim " " (string-downcase key)) 1) alist)))
   alist)
 
 (defun key-exists (key alist)
@@ -47,19 +47,28 @@
     alist))
 
 (defun remove-char-from-string (invalid-char orig-str)
+    (format t "String now is: ~A~%" orig-str)
+  (format t "Prev invalid char: ~A~%" invalid-char)
   (let ((str "")
-        (char-position 0)
+        (char-position -1)
         (char-to-add ""))
    (loop for ch across orig-str do
          (setq char-to-add ch)
-         (when (char= invalid-char char-to-add)
-           (format t "inv: ~A, reg:~A~%" invalid-char char-to-add)
-          (setq char-position (position char-to-add orig-str))
-          (if (and (< char-position (- (length orig-str) 1)) (not (char= #\Space (char orig-str (1+ char-position))
-                                                                         (setq char-to-add #\Space))))
-             (return)))
-         (format t "Adding: ~A~%" char-to-add)
-        (setq str (concatenate 'string str (string char-to-add))))
+         (setq char-position (+ char-position 1))
+        (if (not (char= invalid-char char-to-add))
+            (setq str (concatenate 'string str (string char-to-add)))
+            (progn
+             (if (and (char= #\' (coerce char-to-add 'character)))
+                 (progn
+                   (format t "Addin: ~A~%" char-to-add)
+                   (format t "Char pos: ~A" char-position)
+                   (when (and (not (= char-position 0)) (not (= char-position (- (length orig-str) 1))))
+                     (setq str (concatenate 'string str (string char-to-add)))))
+                 (progn
+                   (if (and (< char-position (- (length orig-str) 1)) (not (char= #\Space (char orig-str (1+ char-position)))))
+                       (progn
+                                       (setq char-to-add #\Space)
+                                       (setq str (concatenate 'string str (string char-to-add))))))))))
    str))
 
 (defun remove-invalid-chars(str)
@@ -69,4 +78,6 @@
 
 (defun count-words (sentence)
   (get-list-count (remove-invalid-chars (string-downcase sentence))))
+
+(print (count-words "'First: don't laugh. Then: don't cry. You're getting it.'"))
 
