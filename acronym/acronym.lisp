@@ -1,15 +1,16 @@
 (defpackage :acronym
   (:use :cl)
   (:export :acronym))
+           
 
 (in-package :acronym)
 
 (defun acronym (str)
-  (make-capital-letters 
-    (extract-first-letters 
-      (split-string-into-list-on-delimiter " "  
-           (replace-char-in-string 
-             (replace-char-in-string str #\- " ") #\! "")))))
+  (reverse (make-capital-letters 
+             (extract-first-letters 
+               (split-string-into-list-on-delimiter #\Space  
+                    (replace-char-in-string 
+                      (replace-char-in-string str #\- " ") #\! ""))))))
 
 (defun replace-char-in-string (str replaced replacer)
   (let ((final-string ""))
@@ -25,35 +26,26 @@
 
 (defun split-string-into-list-on-delimiter (delimiter str)
   (let ((my-list '())
-        (start 0)
-        (end (length str))
-        (pos 0)
-        (q ""))
-    (loop while (< start end) do
-          (setq pos (position delimiter str :start start))
-          (setq pos (if (null pos)
-                       end
-                       pos))
-          (setq q (subseq str start pos))
-          (push q my-list)
-          (setq start (+ pos 1)))
-    (reverse my-list)))
+        (word "")
+        (cc 0))
+    (loop for char across str do
+          (when (= cc (- (length str) 1))
+            (progn
+              (setq word (concatenate 'string word (string char)))
+              (setq my-list (cons word my-list))))
+          (if (char= char delimiter)
+              (progn
+                (setq my-list (cons word my-list))
+                (setq word ""))
+            (setq word (concatenate 'string word (string char))))
+          (setq cc (+ cc 1)))
+    my-list))
 
 (defun extract-first-letters (list)
   (let ((acronym ""))
-    (format t "List is: ~A~%" list)
-    (format t "Length of list is: ~A~%" (length list))
     (loop for word in list do
-          (format t "Adding char ~c~%" (char word 0))
           (setq acronym (concatenate 'string acronym (string (char word 0)))))
-    (format t "ACRONYM IS ~A~%" acronym)
     acronym))
 
 (defun make-capital-letters (str)
   (string-upcase str))
-
-; (format t "~A" (acronym "hello my friend"))
-(format t "Count: ~D" (length (split-string-into-list-on-delimiter " " "Hello koce is my name")))
-
-
-  

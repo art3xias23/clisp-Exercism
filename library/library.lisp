@@ -1,16 +1,16 @@
-(defun split (delimiter str)
+(defun split-string-into-list-on-delimiter (delimiter str)
   (let ((my-list '())
-        (start 0)
-        (end (- (length str) 1))
-        (pos 0)
-        (q ""))
-    (loop while (< pos end) do
-          (setq pos (position delimiter str :start start :end end))
-          (setq pos (if (null pos)
-                       (+ end 1)
-                       pos))
-          (setq q (subseq str start pos))
-          (push q my-list)
-          (setq start (+ pos 1)))
-    my-list
+        (word "")
+        (cc 0))
+    (loop for char across str do
+          (when (= cc (- (length str) 1))
+            (progn
+              (setq word (concatenate 'string word (string char)))
+              (setq my-list (cons word my-list))))
+          (if (char= char delimiter)
+              (progn
+                (setq my-list (cons word my-list))
+                (setq word ""))
+            (setq word (concatenate 'string word (string char))))
+          (setq cc (+ cc 1)))
     my-list))
