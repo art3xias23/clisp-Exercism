@@ -16,7 +16,7 @@
 (def-suite* allergies-suite)
 
 (test testing-for-eggs-allergy->not-allergic-to-anything
-  (is-false (allergies:allergic-to-p 0 "eggs") ))
+  (is-false (allergies:allergic-to-p 0 "eggs")))
 
 (test testing-for-eggs-allergy->allergic-only-to-eggs
   (is-true (allergies:allergic-to-p 1 "eggs")))
