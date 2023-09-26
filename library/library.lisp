@@ -1,0 +1,16 @@
+(defun split (delimiter str)
+  (let ((my-list '())
+        (start 0)
+        (end (- (length str) 1))
+        (pos 0)
+        (q ""))
+    (loop while (< pos end) do
+          (setq pos (position delimiter str :start start :end end))
+          (setq pos (if (null pos)
+                       (+ end 1)
+                       pos))
+          (setq q (subseq str start pos))
+          (push q my-list)
+          (setq start (+ pos 1)))
+    my-list
+    my-list))
