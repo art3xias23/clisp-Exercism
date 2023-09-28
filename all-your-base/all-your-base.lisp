@@ -5,7 +5,12 @@
 (in-package :all-your-base)
 
 (defun rebase (list-digits in-base out-base)
-  (unless (or (<= in-base 1) (>= in-base 37)(<= out-base 1) (>= out-base 37) (not (are-digits-valid-for-base list-digits in-base)))
+  (unless (or (<= in-base 1) 
+              (>= in-base 37)
+              (<= out-base 1) 
+              (>= out-base 37) 
+              (not (are-digits-valid-for-base list-digits in-base))
+              (not (are-positive-numbers list-digits)))
     (from-base-10-to-any (to-base-10 list-digits in-base) out-base)))
 
 (defun to-base-10 (list-digits in-base)
@@ -29,6 +34,10 @@
 (defun are-digits-valid-for-base (list-digits base)
   (loop for list-item in list-digits
         always (<= list-item (- base 1))))
+
+(defun are-positive-numbers (digits)
+  (loop for digit in digits
+        always (>= digit 0)))
 
 
 ;(format t "~A~%" (rebase '(1 0 1 0 1 0) 2 1))
