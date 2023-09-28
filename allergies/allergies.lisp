@@ -6,31 +6,44 @@
 (in-package :allergies)
 
 (defun allergic-to-p (score allergen)
-  "Returns true if given allergy score includes given allergen.")
+  (not (null (member allergen (list score)))))
   
 
 (defun list (score)
   (let ((my-allergen-list '())
-        (num score)
-        (item ""))
-    (if (or (<= num 1) (>= num 255))
+        (num 0)
+        (log2num 0))
+    (setq num score)
+    (loop 
+     (if (<= num 0)
+        (return my-allergen-list)
         (progn
-          (setq my-allergen-list (cons "eggs" my-allergen-list)))
-        (progn
-          ())))
-  "Returns a list of allergens for a given allergy score.")
+              (setq log2num (floor (get-log2-value num)))
+              (setq my-allergen-list (add-item-to-list (cdr (assoc log2num (get-allergy-list))) my-allergen-list))
+              (setq num (- num (expt 2 log2num))))))))
 
-(defun log2-value (initial-number)
-  ((/ (log initial-number) (log 2))))
+(defun add-item-to-list (item list)
+  (format t "Adding item: ~A~%" item)
+  (when (and (not (null item)) (null (member item list)))
+    (format t "Added item: ~A~%" item)
+    (setq list (cons item list)))
+  list)
 
-(setq allergy-list 
-      '((1 . "eggs")
-        (2 . "peanuts")
-        (4 . "shellfish")
-        (8 . "strawberries")
-        (16 . "tomatoes")
-        (32 . "chocolate")
-        (64 . "pollen")
-        (128 . "cats")))
+(defun get-log2-value (initial-number)
+  (/ (log initial-number) (log 2)))
 
+(defun get-allergy-list() 
+      '((0 . "eggs")
+        (1 . "peanuts")
+        (2 . "shellfish")
+        (3 . "strawberries")
+        (4 . "tomatoes")
+        (5 . "chocolate")
+        (6 . "pollen")
+        (7 . "cats")
+        (8 . "eggs")
+        (9 . "eggs")
+        (10 . "eggs")))
+
+(format t "Answer: ~A~%" (list 257))
 
