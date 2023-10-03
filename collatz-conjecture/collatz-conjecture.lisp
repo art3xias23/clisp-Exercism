@@ -6,7 +6,7 @@
 
 (defun collatz (n)
   (format t "Num is: ~D~%" n)
-  (if (null n)
+  (if (<= n 0)
       (return-from collatz NIL))
   (when (= n 1)
     (return-from collatz 0))
