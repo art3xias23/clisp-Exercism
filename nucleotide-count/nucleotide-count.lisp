@@ -13,6 +13,8 @@
   
 
 (defun nucleotide-counts (strand)
+  (when (string= strand "")
+    (return-from nucleotide-counts (get-default-hash-table)))
   (let ((my-hash-table (make-hash-table)))
     (map nil (lambda (ch)
                (if (gethash ch my-hash-table)
@@ -26,6 +28,13 @@
   (loop for key being each hash-key in my-hash-table do
         (format t "Key: ~A, Value: ~A~%" key (gethash key my-hash-table))))
 
-(print-hash-table (nucleotide-counts "CACDGHA"))
+(defun get-default-hash-table ()
+  (let
+      ((my-hash-table (make-hash-table)))
+    (loop for ch in '(#\A #\T #\C #\G) do
+         (setf (gethash ch my-hash-table) 0))
+    my-hash-table))
+
+(print-hash-table (get-default-hash-table))
 
   
