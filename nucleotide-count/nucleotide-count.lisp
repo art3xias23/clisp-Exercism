@@ -6,11 +6,15 @@
 
 (defun dna-count (nucleotide strand)
   "Returns a count of the given nucleotide appearing in a DNA strand."
+  (when (notany (lambda (c) (char= c nucleotide)) '(#\A #\C #\G #\T))
+    (signal 'nucleotide-count:invalid-nucleotide))
   (reduce (lambda (cc ch)
               (if (char= ch nucleotide)
                   (setq cc (1+ cc))
                   cc)) strand :initial-value 0))
   
+(define-condition nucleotide-count:invalid-nucleotide (error)
+  ((message :initarg :message :reader message)))
 
 (defun nucleotide-counts (strand)
   (when (string= strand "")
