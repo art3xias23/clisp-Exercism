@@ -15,7 +15,7 @@
 (defun nucleotide-counts (strand)
   (when (string= strand "")
     (return-from nucleotide-counts (get-default-hash-table)))
-  (let ((my-hash-table (make-hash-table)))
+  (let ((my-hash-table (get-default-hash-table)))
     (map nil (lambda (ch)
                (if (gethash ch my-hash-table)
                    (incf (gethash ch my-hash-table))
@@ -35,6 +35,6 @@
          (setf (gethash ch my-hash-table) 0))
     my-hash-table))
 
-(print-hash-table (get-default-hash-table))
+(print-hash-table (nucleotide-counts "GGGGGG"))
 
   
