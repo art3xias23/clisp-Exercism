@@ -3,27 +3,44 @@
 
 (in-package :signaling-example)
 
-; Define the condition class
+;=================SIGNAL CONDITION=======================
+
+; Define the CONDITION class, which should inherit from the error class
 (defclass zero-division-error (error)
   ((message :initarg :message :reader message)))
 
-(defun signal-zero-division-error()
+(CLOS:VATE-SUPERCLASS zero-division-error error)
+; Function which should signal an instance of the zero-division-error class
+(defun signal-zero-division-error ()
     (signal (make-instance 'zero-division-error :message "This is a zero division error")))
 
-(defun handle-zero-division-error(condition)
+;==================================
+
+;===============HANDLING A CONDITION===================
+
+; Takes a zero-division-error condition object and prints a message to the
+; console
+(defun handle-zero-division-error (condition)
     (format t "An error occured: ~a~%" (message condition)))
 
+;Establishes handle-zero-division-error function as a handler for
+;zero-division-error condition and then signals zero-division-error condition
 (defun signal-and-handle-zero-divison-error ()
   (handler-bind ((zero-division-error #'handle-zero-division-error))
     (signal-zero-division-error)))
 
+;==================================
+
+;=============== ESTABLISHING A RESTART===============
 (defun try-again()
     (format t "Trying again...~%"))
 
+; Establishes the try-again function as a restart and then signals a
+; zero-division-error condition
 (defun signal-error-and-establish-restart()
     (restart-bind ((try-again #'try-again))
       (signal (make-instance 'zero-division-error :message "This is an error"))))
-
+;==================================
 (defun divide-and-handle-errors (numerator denominator)
   (handler-case 
    (/ numerator denominator)
